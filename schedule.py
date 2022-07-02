@@ -1,6 +1,10 @@
 def time_to_minutes(time):
 	"""Convert time into the half hour it corresponds with."""
 	time_split = time.split(':')
+
+	if len(time_split) != 2:
+		return ''
+
 	return (int(time_split[0]) * 60) + int(time_split[1])
 
 
@@ -11,35 +15,27 @@ def generate_schedule(path):
 		ruleset = file.read().split('\n')
 	
 	minutes = ['Todo List'] * (24 * 60)
-	# punishment_minutes = calculate_punishment(service, tasklist_id)
-	punishment_minutes = 0
 
 	# Load definite rules
 	for rule in ruleset:
-		rule_type = rule.split(' - ')[0]
-
-		if rule_type != 'definite':
-			continue
-
 		# Load rule arguments in
-		rule_args = rule.split(' - ')[1].split(', ')
+		rule_args = rule.split(', ')
 		name = rule_args[0] + ''
 
-		# Add task to minutes
+		# Skip line if there are not 3 arguments (name, start time, end time)
+		if len(rule_args) != 3:
+			continue
+
+		# Parse times and continue if parsing fails
 		start_time = time_to_minutes(rule_args[1])
 		end_time = time_to_minutes(rule_args[2])
 
+		if start_time == '' or end_time == '':
+			continue
+
+		# Add task to minutes
 		for t in range(start_time, end_time):
 			minutes[t] = name + ''
-
-	# Reduce free time by punishment minutes
-	for m in reversed(range(len(minutes))):
-		if punishment_minutes == 0:
-			break
-		
-		if minutes[m] == 'Free':
-			minutes[m] = 'Punishment: Read'
-			punishment_minutes -= 1
 
 	# Convert minutes to schedule
 	schedule = ''

@@ -68,18 +68,19 @@ class RhythmAsana:
 
             # If there are subtasks, add each to rhythm tasks
             delta = (due_date.date() - target_date).days
-
-            if delta < 0:
-                delta = 0
-
             ratio = delta / len(subtasks)
 
             for i, subtask in enumerate(subtasks):
                 subtask_name = subtask['name']
                 subtask_gid = subtask['gid']
-                subtask_due_date = target_date + timedelta(days=int((i + 1) * ratio))
-                subtask_due_datetime = datetime.combine(subtask_due_date, datetime.min.time())
-                due = subtask_due_datetime.isoformat() + 'Z'
+
+                if delta >= 0:
+                    subtask_due_date = target_date + timedelta(days=int((i + 1) * ratio))
+                    subtask_due_datetime = datetime.combine(subtask_due_date, datetime.min.time())
+                    due = subtask_due_datetime.isoformat() + 'Z'
+                else:
+                    # If the due date is before today, set all subtask due dates to task due date
+                    due = due_date.isoformat() + 'Z'
 
                 rhythm_task = {
                     'title': f'{subtask_name} | {task_name}',

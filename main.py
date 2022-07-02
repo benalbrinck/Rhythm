@@ -72,7 +72,7 @@ class Rulesets:
         print("""
             name/comments\n
             \n
-            definite - name, HH:MM (start), HH:MM (end)
+            name, HH:MM (start), HH:MM (end)
         """)
 
         # Open day ruleset in notepad to edit it
@@ -84,7 +84,7 @@ class Rulesets:
         print("""
             name/comments\n
             \n
-            definite - name, HH:MM (start), HH:MM (end)
+            name, HH:MM (start), HH:MM (end)
         """)
 
         # Create day if it does not exist

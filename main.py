@@ -5,6 +5,7 @@ import gcalendar
 import rhythm_asana
 import schedule
 import tasks
+import yaml
 
 
 class Dash:
@@ -47,6 +48,7 @@ class Rulesets:
     def list_rulesets():
         """List the names of each action."""
         file_names = os.listdir('rulesets')
+
         for f in file_names:
             with open(f'rulesets/{f}') as text:
                 name = text.read().split('\n')[0]
@@ -57,6 +59,7 @@ class Rulesets:
     def list_current_rulesets():
         """List the names of each ruleset used for each day."""
         file_names = os.listdir('current_rulesets')
+
         for f in file_names:
             with open(f'current_rulesets/{f}') as text:
                 name = text.read().split('\n')[0]
@@ -84,8 +87,14 @@ class Rulesets:
             definite - name, HH:MM (start), HH:MM (end)
         """)
 
-        # Open a day in notepad to edit it
+        # Create day if it does not exist
+        if not os.path.exists(f'current_rulesets/{day}.txt'):
+            with open(f'current_rulesets/{day}.txt', 'w') as file:
+                file.write(day.capitalize())
+
+        # Open the day in notepad to edit it
         os.system(f'notepad.exe "current_rulesets/{day}.txt"')
+
         return 1
 
     def new_ruleset(name):
@@ -111,13 +120,24 @@ def main():
 
     current_screen = Dash
 
-    asana = rhythm_asana.RhythmAsana('1/1200500789931421:383258880e036af67469a15d13beada6', '1200500789931421', '1200500867254924')
+    # Get config and create Asana, Google Calendar, and Google Tasks handlers
+    with open('credentials/config.yml') as file:
+        config = yaml.safe_load(file)
+
+    asana = rhythm_asana.RhythmAsana(config['access_token'], config['assignee_gid'], config['workspace_gid'])
     calendar = gcalendar.Calendar()
-    google_tasks = tasks.Tasks('MDAyOTQ2ODkwNTQ0NDczNDgyNjA6MDow')
+    google_tasks = tasks.Tasks(config['tasklist_id'])
 
     # Clear lambda
     clear = lambda: os.system('cls')
     clear()
+
+    # Create rulesets and current_rulesets folders if they don't exist
+    if not os.path.exists('rulesets'):
+        os.makedirs('rulesets')
+    
+    if not os.path.exists('current_rulesets'):
+        os.makedirs('current_rulesets')
 
     while True:
         # Find each method of the current class, and add on a quit method
@@ -161,6 +181,7 @@ def main():
             1 - Prompt and clear
             2 - No prompt or clear
         """
+
         if r == 1:
             input('Press Enter to continue...')
         elif r == 2:

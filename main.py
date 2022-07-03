@@ -1,3 +1,5 @@
+"""Main program of Rhythm that displays a command prompt interface to interact with Rhythm."""
+
 import os
 import traceback
 
@@ -73,6 +75,8 @@ class Rulesets:
             name/comments\n
             \n
             name, HH:MM (start), HH:MM (end)
+            \n
+            Comments with #
         """)
 
         # Open day ruleset in notepad to edit it
@@ -85,6 +89,8 @@ class Rulesets:
             name/comments\n
             \n
             name, HH:MM (start), HH:MM (end)
+            \n
+            Comments with #
         """)
 
         # Create day if it does not exist

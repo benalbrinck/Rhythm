@@ -1,9 +1,21 @@
+"""Handles getting tasks from and writing to Asana."""
+
 import asana
 from datetime import datetime, timedelta
 from gcalendar import Calendar
 
 class RhythmAsana:
-    def __init__(self, access_token, assignee_gid, workspace_gid):
+    """Class that handles reading and writing from Asana."""
+
+    def __init__(self, access_token: str, assignee_gid: str, workspace_gid: str) -> None:
+        """Initializes an instance with a connection to Asana.
+        
+        Parameters:
+            access_token (str): access token for Asana.
+            assignee_gid (str): user's assignee GID in Asana.
+            workspace_gid (str): workspace GID to access.
+        """
+
         self.client = asana.Client.access_token(access_token)
         self.client.headers = {'asana-enable': 'new_user_task_lists'}  # Supress warning
 
@@ -23,8 +35,15 @@ class RhythmAsana:
             'this.completed'
         ]
 
-    def get_tasks(self, day):
-        """Get tasks and subtasks for Rhythm."""
+    def get_tasks(self, day: str) -> list:
+        """Get tasks and subtasks for Rhythm.
+        
+        Parameters:
+            day (str): string representation of a day (ex: Monday).
+        
+        Returns:
+            rhythm_tasks (list): a list of dictionaries. Each dictionary is a task, with the keys title, notes, and due.
+        """
         target_date = Calendar.day_to_date(day)
 
         tasks = self.client.tasks.get_tasks({
@@ -93,8 +112,13 @@ class RhythmAsana:
         rhythm_tasks.sort(key=lambda x: x['due'])
         return rhythm_tasks
 
-    def set_tasks(self, gids):
-        """Set tasks and subtasks as complete."""
+    def set_tasks(self, gids: list) -> None:
+        """Set tasks and subtasks as complete.
+        
+        Parameters:
+            gids (list): a list of task and subtask GIDs. A subtask GID has the task GID and subtask GID separated by a space.
+        """
+        
         subtask_checks = []
 
         for gid in gids:

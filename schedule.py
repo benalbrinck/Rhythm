@@ -1,15 +1,35 @@
-def time_to_minutes(time):
-	"""Convert time into the half hour it corresponds with."""
+"""Handles creating schedules."""
+
+def time_to_minutes(time: str) -> int:
+	"""Convert time into the minute it corresponds with.
+	
+	Parameters:
+		time (str): string representation of a time in the format HH:MM.
+	
+	Returns:
+		minutes (int): the amount of minutes since midnight. Will return -1 if the time is not valid.
+	"""
+
 	time_split = time.split(':')
 
 	if len(time_split) != 2:
-		return ''
+		return -1
 
-	return (int(time_split[0]) * 60) + int(time_split[1])
+	minutes = (int(time_split[0]) * 60) + int(time_split[1])
+	return minutes
 
 
-def generate_schedule(path):
-	"""Create a new schedule from the ruleset of the path given. Returns minute count of todo list."""
+def generate_schedule(path: str) -> tuple[str, list]:
+	"""Create a new schedule from the ruleset of the path given.
+	
+	Parameters:
+		path (str): the path to the schedule.
+	
+	Returns:
+		schedule (str): the schedule of the day, with each line corresponding to the minute of the day.
+		minute_count (int): the count of minutes in the schedule that are marked as todo list.
+	"""
+
 	# Get the ruleset from the path
 	with open(path) as file:
 		ruleset = file.read().split('\n')
@@ -18,6 +38,12 @@ def generate_schedule(path):
 
 	# Load definite rules
 	for rule in ruleset:
+		# Remove comments
+		comment_index = rule.find('#')
+
+		if comment_index != -1:
+			rule = rule[:comment_index].strip()
+
 		# Load rule arguments in
 		rule_args = rule.split(', ')
 		name = rule_args[0] + ''
@@ -30,7 +56,7 @@ def generate_schedule(path):
 		start_time = time_to_minutes(rule_args[1])
 		end_time = time_to_minutes(rule_args[2])
 
-		if start_time == '' or end_time == '':
+		if start_time == -1 or end_time == -1:
 			continue
 
 		# Add task to minutes

@@ -3,10 +3,9 @@ import os
 """
 To make this a .exe file:
 
-pyinstaller -F -i [ICON FILE] [PYTHON FILE]
+pyinstaller -F -i [ICON FILE] rhythm.py
 
-Recommend making a separate file that runs it like this one so you can still edit the
-code without having to make a new .exe every time.
+If you don't have an icon file, you can remove -i [ICON FILE].
 """
 
 if __name__ == '__main__':
